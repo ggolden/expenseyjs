@@ -15,8 +15,6 @@ router.get("/", function(req, res, next) {
 
   // get the expenses
   const expenses = expensesService.getExpenses();
-  // const newExpense = new expensesService.Expense(9,"new",0.99);
-  // console.log(`new expense = ${newExpense}`);
 
   // send the json
   res.json(expenses);

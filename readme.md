@@ -1,4 +1,4 @@
-###   To build the docker image:
+### To build the docker image:
 
 ```docker build -t expensey .```
 
@@ -17,3 +17,18 @@
 ### To stop:
 
 ```docker kill expensey && docker rm expensey```
+
+
+### To run with debug
+
+```DEBUG=expensey:server npm start```
+
+### To run with the Chrome debugger
+
+```node --inspect-brk ./bin/www```
+
+then open chrome://inspect in Chrome and pick app
+
+### To check syntax of a .js file
+
+```node -c <file>
