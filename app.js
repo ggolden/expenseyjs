@@ -10,7 +10,7 @@ var expenses = require('./routes/expenses');
 
 var app = express();
 
-// // view engine setup
+// view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
@@ -23,7 +23,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // setup our routes
-app.use('/expenses', expenses);
+app.use('/api/data/expenses', expenses);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
