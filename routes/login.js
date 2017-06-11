@@ -7,8 +7,6 @@ const router = express.Router();
 const authService = require("../auth/authenticationService");
 const Credentials = require("../auth/credentials");
 
-const TOKEN = "AUTH";
-
 // POST a new login - post body JSON is Credentials
 router.post("/", function(req, res, next) {
 
@@ -30,7 +28,8 @@ router.post("/", function(req, res, next) {
   // otherwise set a session cookie
   else {
     res.status(200);
-    res.cookie(TOKEN, auth.getId(), {maxAge : -1});
+//    res.cookie(TOKEN, auth.getId(), {maxAge : -1});
+    res.cookie(authService.TOKEN, auth.getId()); // TODO: session only
   }
 
   res.end();

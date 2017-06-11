@@ -1,7 +1,7 @@
 class Credentials {
   constructor(password, userId) {
     this.password = password;
-    this.userID = userId;
+    this.userId = userId;
   }
 
   getPassword() {

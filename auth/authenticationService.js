@@ -13,6 +13,9 @@ let nextId = 1;
 /** authentications: mapped by token to the Authentication */
 let auths = new Map();
 
+// cookie value for auth token
+const TOKEN = "AUTH";
+
 /**
  * Create an authentication based on credentials.
  *
@@ -22,7 +25,7 @@ let auths = new Map();
  */
 const authenticateByCredentials = function(creds) {
   // check credentials
-  let found = credentials.find(c => equal(c,creds));
+  const found = credentials.find(c => equal(c, creds));
   if (found === undefined) {
     return undefined;
   }
@@ -47,6 +50,10 @@ const authenticateByCredentials = function(creds) {
  * @return The Authentication if found and valid, or not.
  */
 const authenticateByToken = function(token) {
+  // convert from String
+  if (typeof token === 'string' ) {
+    token = parseInt(token);
+  }
   // check that the token is to a valid authentication
   const auth = auths.get(token);
   if (auth === undefined)
@@ -149,11 +156,25 @@ const removeUser = function(userID) {
   // TODO: if currently authenticated, end it
 }
 
+const authenticateReqByToken = function(req) {
+  const token = req.cookies[TOKEN];
+  const auth = authenticateByToken(token);
+  if (auth === undefined) {
+    res.status(403);
+    res.end();
+    return undefined;
+  }
+
+  return auth;
+}
+
 module.exports = {
   authenticateByCredentials,
   authenticateByToken,
   changePassword,
   registerUser,
   removeAuthentication,
-  removeUser
+  removeUser,
+  authenticateReqByToken,
+  TOKEN
 };

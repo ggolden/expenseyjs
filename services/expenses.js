@@ -5,18 +5,15 @@
 // getExpenses(String userId) - returns a list of defined expenses for this user -> [Expense]
 // addExpense(Float amount, Date date, String description, String userId) -> Expense
 
-// return an array of expenses
 // TODO: from a database or something?
-const getExpenses = function(userId) {
-  return [
-    new Expense(1, 900.00, new Date(), "Airline ticket", 1),
-    new Expense(2, 100.00, new Date(), "Parking", 1),
-    new Expense(3, 20.00, new Date(), "Airport Shuttle", 1)
-  ];
-}
-
-// TODO: how to synchronize this across multiple concurrent requests that might all be calling addExpense?
+let expenses = [];
 let nextId = 1;
+
+// return an array of expenses for this user
+const getExpenses = function(userId) {
+  const list = expenses.filter(e => e.getUserId() === userId);
+  return list;
+}
 
 // add a new expense
 const addExpense = function(amount, date, description, userId) {
@@ -25,7 +22,9 @@ const addExpense = function(amount, date, description, userId) {
 
   const expense = new Expense(id, amount, date, description, userId)
 
-  return expense
+  expenses.push(expense);
+
+  return expense;
 }
 
 // The Expense class
