@@ -1,65 +1,54 @@
 // expenses service
-//
-// Provides the Expense class
-//
-// getExpenses(String userId) - returns a list of defined expenses for this user -> [Expense]
-// addExpense(Float amount, Date date, String description, String userId) -> Expense
 
-// TODO: from a database or something?
-let expenses = [];
-let nextId = 1;
+const Expense = require("./expense");
+// const storage = require("./expensesStorageMem");
+// const storage = require("./expensesStorageMongo");
+let storage = null;
 
-// return an array of expenses for this user
-const getExpenses = function(userId) {
-  const list = expenses.filter(e => e.getUserId() === userId);
-  return list;
+// set the storage engine to use
+const init = function(storageVarient) {
+    storage = storageVarient;
 }
 
-// add a new expense
+/**
+ * Record a new expense
+ *
+ * @param amount
+ *            The expense amount.
+ * @param date
+ *            The expense date.
+ * @param description
+ *            The expense description.
+ * @param userId
+ *            The user ID of the user claiming the expense.
+ * @return The recorded expense, or not if any fields are missing or invalid.
+ * @return a Promise for the added expense.
+ */
 const addExpense = function(amount, date, description, userId) {
-  const id = nextId;
-  nextId += 1;
+  return new Promise((resolve, reject) => {
+    // TODO: validate the fields
+    if ((amount == null) || (date == null) || (description == null) || (userId == null))
+    {
+      reject(); // TODO: what error?
+    }
 
-  const expense = new Expense(id, amount, date, description, userId)
-
-  expenses.push(expense);
-
-  return expense;
+    storage.createExpense(amount, date, description, userId).then((expense) => {
+      resolve(expense);
+    }, (err) => {
+      reject(err);
+    });
+  });
 }
 
-// The Expense class
-class Expense {
-  constructor(id, amount, date, description, userId) {
-      this.id = id;
-      this.amount = amount;
-      this.date = date;
-      this.description = description;
-      this.userId = userId;
-  }
-
-  getId() {
-    return this.id;
-  }
-
-  getAmount() {
-    return this.amount;
-  }
-
-  getDate() {
-    return this.date;
-  }
-
-  getDescription() {
-    return this.description;
-  }
-
-  getUserId() {
-    return this.userId;
-  }
-
-  toString() {
-    return `Expense: id: ${this.id}  amount: ${this.amount}  date: ${this.date}  description: ${this.description}  userId: ${this.userId}`
-  }
+/**
+ * Get all the expenses for this user.
+ *
+ * @param userId
+ *            The user ID.
+ * @return a Promise for the list of expenses, possibly empty.
+ */
+const getExpenses = function(userId) {
+  return storage.readExpensesForUser(userId);
 }
 
-module.exports = {Expense, getExpenses, addExpense};
+module.exports = {getExpenses, addExpense, init};

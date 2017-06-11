@@ -1,11 +1,16 @@
 // expenses routes
 
-var express = require("express");
-var router = express.Router();
+const express = require("express");
+const router = express.Router();
 
 // use the Expenses and Authentication services
-var expensesService = require("../services/expenses");
-var authService = require("../auth/authenticationService");
+const expensesService = require("../services/expenses");
+const authService = require("../auth/authenticationService");
+
+// configure the expenses service with a storage
+// const expensesStorage = require("../services/expensesStorageMem");
+const expensesStorage = require("../services/expensesStorageMongo");
+expensesService.init(expensesStorage);
 
 // GET expenses - return a JSON array of Expense objects.  Cookie holds auth.
 router.get("/", function(req, res, next) {
@@ -19,10 +24,11 @@ router.get("/", function(req, res, next) {
   res.setHeader("Last-Modified", now.toUTCString());
 
   // get the expenses
-  const expenses = expensesService.getExpenses(auth.getUserId());
-
-  // send the json
-  res.json(expenses);
+  expensesService.getExpenses(auth.getUserId()).then((expenses) => {
+    res.json(expenses);
+  }, (err) => {
+    res.json({}); // TODO: ???
+  });
 });
 
 // POST a new expense - take the expense in the body json, return the new Expense
@@ -41,10 +47,11 @@ router.post("/", function(req, res, next) {
   const userId = auth.getUserId();
 
   // create a new expense in the expenses service
-  const expense = expensesService.addExpense(amount, date, description, userId);
-
-  // return the new expense
-  res.json(expense);
+  expensesService.addExpense(amount, date, description, userId).then((expense) => {
+    res.json(expense);
+  }, (err) => {
+    res.json({}); // TODO: ???
+  });
 });
 
 module.exports = router;

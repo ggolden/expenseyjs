@@ -32,3 +32,20 @@ then open chrome://inspect in Chrome and pick app
 ### To check syntax of a .js file
 
 ```node -c <file>
+
+### Mongo in docker
+
+```docker run --name mongo -v /Users/ggolden/tmp/mongo:/data/db -p 27017:27017 -d mongo:3```
+
+### run expensey, linking to the running mongo image
+
+```docker run -p 80:3000 -d --link mongo:mongo --name expensey expensey```
+
+### get into mongo
+```docker exec -it mongo mongo admin```
+
+use expenses
+
+db.expenses.remove({})
+
+db.expenses.find().pretty()
